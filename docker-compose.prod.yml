@@ -34,7 +34,7 @@ services:
             MYSQL_DATABASE: pool.argentisnano.com
             MYSQL_USER: root
             MYSQL_PASSWORD: 5tY4?RY\b-L?GIOI
-            MYSQL_ROOT_PASSWORD: 5tY4?RY\b-L?GIOI
+            MYSQL_ROOT_PASSWORD: 730ykFQ1uR$6
             SERVICE_TAGS: dev
             SERVICE_NAME: mysql
         volumes:

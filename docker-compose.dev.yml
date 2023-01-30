@@ -34,7 +34,7 @@ services:
             MYSQL_DATABASE: dev.pool.argentisnano.com
             MYSQL_USER: root
             MYSQL_PASSWORD: K?psJ8M(w]!v!/#b
-            MYSQL_ROOT_PASSWORD: K?psJ8M(w]!v!/#b
+            MYSQL_ROOT_PASSWORD: 8!sXxppT1@80
             SERVICE_TAGS: dev
             SERVICE_NAME: mysql
         volumes:
