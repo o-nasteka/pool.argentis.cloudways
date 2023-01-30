@@ -9,6 +9,7 @@
 docker-compose.override.yml
 docker-compose.dev.yml
 docker-compose.prod.yml
+docker-compose.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
