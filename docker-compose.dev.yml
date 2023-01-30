@@ -31,7 +31,7 @@ services:
         ports:
             - "5306:3306"
         environment:
-            MYSQL_DATABASE: pool.argentisnano.com
+            MYSQL_DATABASE: dev.pool.argentisnano.com
             MYSQL_USER: root
             MYSQL_PASSWORD: K?psJ8M(w]!v!/#b
             MYSQL_ROOT_PASSWORD: K?psJ8M(w]!v!/#b
