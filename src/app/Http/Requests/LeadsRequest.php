@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Lead;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLeads extends FormRequest
+class LeadsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
