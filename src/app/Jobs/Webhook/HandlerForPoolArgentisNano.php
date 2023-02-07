@@ -2,6 +2,8 @@
 
 namespace App\Jobs\Webhook;
 
+use App\Http\Requests\StoreLeads;
+use App\Models\Lead;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
 
 class HandlerForPoolArgentisNano extends ProcessWebhookJob
@@ -13,8 +15,12 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
      */
     public $timeout = 120;
 
-    public function handle()
+    public function handle(StoreLeads $request)
     {
-        logger('Webhook ok');
+        logger('handle request: ', $request->all());
+
+        $lead = Lead::create(($request->only(array_keys($request->rules()))));
+        logger('lead:',$lead);
+
     }
 }
