@@ -19,6 +19,10 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
     public function handle()
     {
         $data = json_decode($this->webhookCall, true)['payload'];
-        logger($data);
+//        logger($data);
+
+        $leads = Lead::store($data);
+//        logger($leads);
+
     }
 }
