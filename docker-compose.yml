@@ -118,8 +118,8 @@ services:
 
     supervisor:
         build:
-            context: .
-            dockerfile: ./dockerfiles/supervisor.dockerfile
+            context: ./dockerfiles
+            dockerfile: supervisor.dockerfile
         container_name: supervisor
         volumes:
             - ./src:/var/www/html
