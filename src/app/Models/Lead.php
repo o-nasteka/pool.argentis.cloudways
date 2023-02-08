@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Requests\LeadsRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Lead extends Model
 {
@@ -43,5 +45,14 @@ class Lead extends Model
             'form_id'                           => 'sometimes|string|min:2|max:50',
             'form_name'                         => 'sometimes|string|min:2|max:50',
         ];
+    }
+
+    /**
+     * @param $data
+     */
+    public static function store($data)
+    {
+        Log::info('store: ', $data);
+        return self::create($data);
     }
 }
