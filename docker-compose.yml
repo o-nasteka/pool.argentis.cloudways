@@ -115,3 +115,13 @@ services:
             - "8025:8025"
         networks:
             - laravel
+
+    supervisor:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/supervisor.dockerfile
+        container_name: supervisor
+        volumes:
+            - ./src:/var/www/html
+        networks:
+            - laravel
