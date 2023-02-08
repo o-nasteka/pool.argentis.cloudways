@@ -2,10 +2,12 @@
 
 namespace App\Jobs\Webhook;
 
+use App\Models\Lead;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
 
 class HandlerForPoolArgentisNano extends ProcessWebhookJob
 {
+
     /**
      * The number of seconds the job can run before timing out.
      *
@@ -13,8 +15,10 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
      */
     public $timeout = 120;
 
+
     public function handle()
     {
-        logger('Webhook ok');
+        $data = json_decode($this->webhookCall, true)['payload'];
+        logger($data);
     }
 }
