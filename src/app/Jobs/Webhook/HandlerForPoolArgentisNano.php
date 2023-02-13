@@ -23,6 +23,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         $data = $this->webhookCall['payload'];
 
         $preparedData = $this->prepareData($data);
+        logger($preparedData);
         $this->sendData(json_encode($preparedData));
 
     }
@@ -34,6 +35,11 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
     private function prepareData($data)
     {
         $dataPaymentProducts = $data['payment']['products'];
+        $dataPaymentProducts = $this->prepareDataProductsName($dataPaymentProducts);
+
+        $dataCustomFields = $data['payment'];
+        $dataCustomFields = $this->prepareCustomFields($dataCustomFields);
+
 
         return $preparedData = [
             "title" => $data['name'] . '_' .$data['phone'], // lead name
@@ -47,6 +53,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
                 "email" => $data['email'],
             ],
             "products" => $dataPaymentProducts
+//            "custom_fields" => $dataCustomFields
         ];
     }
 
@@ -78,5 +85,37 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
 
         curl_close($ch);
 
+    }
+
+    /**
+     * @param $dataPaymentProducts
+     * @return mixed
+     */
+    private function prepareDataProductsName($dataPaymentProducts)
+    {
+        $dataPaymentProducts = $this->productNameSpecialCharsDecode($dataPaymentProducts);
+
+        return $dataPaymentProducts;
+    }
+
+    /**
+     * @param $dataPaymentProducts
+     * @return mixed
+     */
+    private function productNameSpecialCharsDecode($dataPaymentProducts)
+    {
+        foreach ($dataPaymentProducts as &$dataPaymentProduct)
+        {
+            $dataPaymentProduct['name'] = htmlspecialchars_decode($dataPaymentProduct['name']);
+        }
+
+        return $dataPaymentProducts;
+    }
+
+    private function prepareCustomFields($dataCustomFields)
+    {
+        return $dataCustomFields = [
+          "promocode" => $dataCustomFields['promocode']
+        ];
     }
 }
