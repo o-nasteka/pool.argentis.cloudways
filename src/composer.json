@@ -14,7 +14,8 @@
         "predis/predis": "^2.1",
         "spatie/laravel-webhook-client": "^3.1",
         "tcg/voyager": "^1.6",
-      "ext-json": "*"
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
