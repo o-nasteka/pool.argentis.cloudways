@@ -45,7 +45,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
             "title" => $data['name'] . '_' .$data['phone'], // lead name
             "source_id" => 1,
             "manager_comment" => '',
-            "manager_id" => 1, 
+            "manager_id" => 1,
             "pipeline_id" => '',
             "contact" => [
                 "full_name" => $data['name'],
