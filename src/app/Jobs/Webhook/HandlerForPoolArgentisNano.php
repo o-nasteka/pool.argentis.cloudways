@@ -23,7 +23,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         $data = $this->webhookCall['payload'];
 
         $preparedData = $this->prepareData($data);
-        logger($preparedData);
+        logger(json_encode($preparedData));
         $this->sendData(json_encode($preparedData));
 
     }
@@ -37,23 +37,23 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         $dataPaymentProducts = $data['payment']['products'];
         $dataPaymentProducts = $this->prepareDataProductsName($dataPaymentProducts);
 
-        $dataCustomFields = $data['payment'];
+        $dataCustomFields = $data;
         $dataCustomFields = $this->prepareCustomFields($dataCustomFields);
 
 
         return $preparedData = [
             "title" => $data['name'] . '_' .$data['phone'], // lead name
-            "source_id" => 1, // source id
+            "source_id" => 1,
             "manager_comment" => '',
-            "manager_id" => 1, // manager id
+            "manager_id" => 1, 
             "pipeline_id" => '',
             "contact" => [
                 "full_name" => $data['name'],
                 "phone" => $data['phone'],
                 "email" => $data['email'],
             ],
-            "products" => $dataPaymentProducts
-//            "custom_fields" => $dataCustomFields
+            "products" => $dataPaymentProducts,
+            "custom_fields" => $dataCustomFields
         ];
     }
 
@@ -112,10 +112,42 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         return $dataPaymentProducts;
     }
 
+    /**
+     * @param $dataCustomFields
+     * @return array
+     */
     private function prepareCustomFields($dataCustomFields)
     {
+        $paymentsystem = $this->setPaymentType($dataCustomFields['paymentsystem']);
+
         return $dataCustomFields = [
-          "promocode" => $dataCustomFields['promocode']
+                [   'uuid'  => 'LD_1009',
+                    'value' => $dataCustomFields['payment']['delivery_address']
+                ],
+                [   'uuid'  => 'LD_1010',
+                    'value' => $dataCustomFields['payment']['promocode']
+                ],
+                [   'uuid'  => 'LD_1011',
+                    'value' => $paymentsystem
+                ]
         ];
+    }
+
+    /**
+     * @param $paymentSystem
+     * @return string
+     */
+    private function setPaymentType($paymentSystem)
+    {
+        switch ($paymentSystem){
+            case 'cash':
+                $paymentSystem = 'Післяплата';
+                break;
+            case 'custom.monobank':
+                $paymentSystem = 'Monobank';
+                break;
+        }
+
+        return $paymentSystem;
     }
 }
