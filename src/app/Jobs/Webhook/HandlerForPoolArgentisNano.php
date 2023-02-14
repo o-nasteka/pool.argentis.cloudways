@@ -13,7 +13,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
      *
      * @var int
      */
-    public $timeout = 120;
+    public $timeout = 3600;
 
     /**
      *
