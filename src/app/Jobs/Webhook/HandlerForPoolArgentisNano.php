@@ -20,11 +20,15 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
      */
     public function handle()
     {
-        $data = $this->webhookCall['payload'];
+        if(config('services.keycrm.service_enabled')){
+            $data = $this->webhookCall['payload'];
 
-        $preparedData = $this->prepareData($data);
-        logger(json_encode($preparedData));
-        $this->sendData(json_encode($preparedData));
+            $preparedData = $this->prepareData($data);
+            if(config('services.keycrm.log')) {
+                logger(json_encode($preparedData));
+            }
+            $this->sendData(json_encode($preparedData));
+        }
 
     }
 
@@ -64,11 +68,13 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
     {
 
         // api token
-        $token = 'NDk2NjY0ODVlNDhjYjhhODFkOTVhNGQxYmI2MTZiMjFhMjVlMDZkNg';
+        $apiToken   = config('services.keycrm.api_token');
+        $url        = config('services.keycrm.url');
+        $action     = config('services.keycrm.action_lead');
 
         // send data to key_crm server
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://openapi.keycrm.app/v1/leads");
+        curl_setopt($ch, CURLOPT_URL, $url . $action);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS,$data_string);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -77,11 +83,13 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
                 "Accept: application/json",
                 "Cache-Control: no-cache",
                 "Pragma: no-cache",
-                'Authorization:  Bearer ' . $token)
+                'Authorization:  Bearer ' . $apiToken)
         );
         $result = curl_exec($ch);
 
-        logger($result);
+        if(config('services.keycrm.log')) {
+            logger($result);
+        }
 
         curl_close($ch);
 
