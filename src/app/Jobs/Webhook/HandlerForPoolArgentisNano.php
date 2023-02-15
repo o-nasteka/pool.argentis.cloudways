@@ -56,11 +56,11 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
                 "phone"         => $data['phone']           ?? '',
                 "email"         => $data['email']           ?? '',
             ],
-            "utm_source"        => $data['utm_source']      ?? '',
-            "utm_medium"        => $data['utm_medium']      ?? '',
-            "utm_campaign"      => $data['utm_campaign']    ?? '',
-            "utm_term"          => $data['utm_term']        ?? '',
-            "utm_content"       => $data['utm_content']     ?? '',
+            "utm_source"        => $data['utm_source']      ?? '-',
+            "utm_medium"        => $data['utm_medium']      ?? '-',
+            "utm_campaign"      => $data['utm_campaign']    ?? '-',
+            "utm_term"          => $data['utm_term']        ?? '-',
+            "utm_content"       => $data['utm_content']     ?? '-',
             "products"          => $dataPaymentProducts     ?? '',
             "custom_fields"     => $dataCustomFields        ?? '',
         ];
@@ -135,13 +135,13 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
 
         return $dataCustomFields = [
                 [   'uuid'  => 'LD_1009',
-                    'value' => $dataCustomFields['payment']['delivery_address'] ?? ''
+                    'value' => $dataCustomFields['payment']['delivery_address'] ?? '-'
                 ],
                 [   'uuid'  => 'LD_1010',
-                    'value' => $dataCustomFields['payment']['promocode'] ?? ''
+                    'value' => $dataCustomFields['payment']['promocode'] ?? '-'
                 ],
                 [   'uuid'  => 'LD_1011',
-                    'value' => $paymentsystem ?? ''
+                    'value' => $paymentsystem ?? '-'
                 ]
         ];
     }
