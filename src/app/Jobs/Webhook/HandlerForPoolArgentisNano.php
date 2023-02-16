@@ -38,12 +38,26 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
      */
     private function prepareData($data)
     {
+        if (isset($data['payment'])){
+            return $this->dataWithProduct($data);
+        } else {
+           $this->dataCallback();
+        }
+
+
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    private function dataWithProduct($data)
+    {
         $dataPaymentProducts = $data['payment']['products'];
         $dataPaymentProducts = $this->prepareDataProductsName($dataPaymentProducts);
 
         $dataCustomFields = $data;
         $dataCustomFields = $this->prepareCustomFields($dataCustomFields);
-
 
         return $preparedData = [
             "title"             => '',
@@ -63,6 +77,30 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
             "utm_content"       => $data['utm_content']     ?? '-',
             "products"          => $dataPaymentProducts     ?? '',
             "custom_fields"     => $dataCustomFields        ?? '',
+        ];
+
+    }
+
+    /**
+     * @return array
+     */
+    private function dataCallback()
+    {
+        return $preparedData = [
+            "title"             => '',
+            "source_id"         => 1,
+            "manager_comment"   => '',
+            "manager_id"        => 1,
+            "pipeline_id"       => '',
+            "contact" => [
+                "full_name"     => $data['Name']            ?? '',
+                "phone"         => $data['Phone']           ?? '',
+            ],
+            "utm_source"        => $data['utm_source']      ?? '-',
+            "utm_medium"        => $data['utm_medium']      ?? '-',
+            "utm_campaign"      => $data['utm_campaign']    ?? '-',
+            "utm_term"          => $data['utm_term']        ?? '-',
+            "utm_content"       => $data['utm_content']     ?? '-',
         ];
     }
 
