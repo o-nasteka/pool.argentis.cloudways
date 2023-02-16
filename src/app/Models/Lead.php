@@ -2,84 +2,163 @@
 
 namespace App\Models;
 
-use App\Http\Requests\LeadsRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Lead
+ * @package App\Models
+ */
 class Lead extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string
+     */
     protected $table = 'leads';
 
+    /**
+     * @var string[]
+     */
     protected $guarded = [''];
 
-    public static function rules(): array
+    /**
+     * @var string
+     */
+    protected string $name = '';
+
+    /**
+     * @var string
+     */
+    protected string $phone = '';
+
+    /**
+     * @var bool
+     */
+    private $dataProducts = false;
+
+
+    /**
+     * @var array
+     */
+    private $promocode = [];
+
+    /**
+     * @var array
+     */
+    private $delivery = [];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'products'  => 'array',
+        'promocode' => 'array',
+        'delivery'  => 'array',
+    ];
+
+    /**
+     * @param $data
+     */
+    public function store($data)
     {
-        return [
-            'name'                                      => 'required|string|min:2|max:100',
-            'phone'                                     => 'required|string|min:2|max:100',
-            'email'                                     => 'sometimes|email|max:100',
-            'checkbox'                                  => 'sometimes|string|min:2|max:5',
-            'paymentsystem'                             => 'sometimes|string|min:2|max:50',
-            'payment_order_id'                          => 'sometimes|string|min:2|max:150',
-            'payment_products_name'                     => 'sometimes|string|min:2|max:255',
-            'payment_products_quantity'                 => 'sometimes|string|min:2|max:50',
-            'payment_products_amount'                   => 'sometimes|string|min:2|max:50',
-            'payment_products_external_id'              => 'sometimes|string|min:2|max:255',
-            'payment_products_price'                    => 'sometimes|string|min:2|max:50',
-            'payment_products_sku'                      => 'sometimes|string|min:2|max:50',
-            'payment_promocode'                         => 'sometimes|string|min:2|max:50',
-            'payment_discount_value'                    => 'sometimes|string|min:2|max:50',
-            'payment_discount'                          => 'sometimes|string|min:2|max:50',
-            'payment_subtotal'                          => 'sometimes|string|min:2|max:50',
-            'payment_amount'                            => 'sometimes|string|min:2|max:50',
-            'payment_delivery'                          => 'sometimes|string|min:2|max:255',
-            'payment_delivery_price'                    => 'sometimes|string|min:2|max:50',
-            'payment_delivery_fio'                      => 'sometimes|string|min:2|max:50',
-            'payment_delivery_address'                  => 'sometimes|string|min:2|max:255',
-            'payment_delivery_comment'                  => 'sometimes|string|min:2|max:255',
-            'payment_delivery_pickup_id'                => 'sometimes|string|min:2|max:50',
-            'payment_delivery_zip'                      => 'sometimes|string|min:2|max:50',
-            'form_id'                                   => 'sometimes|string|min:2|max:50',
-            'form_name'                                 => 'sometimes|string|min:2|max:50',
-        ];
+        Log::channel('keycrm')->info('*** Leads ***');
+        Log::channel('keycrm')->info($data);
+        Log::channel('keycrm')->info('*** Leads END ***');
+
+        $this->checkDataProducts($data);
+        $this->preparePromocode($data);
+        $this->prepareDelivery($data);
+        $this->setName($data);
+        $this->setPhone($data);
+
+        return self::create([
+            'name'                       =>      $this->name,
+            'phone'                      =>      $this->phone,
+            'email'                      =>      $data['email']                                     ?? '',
+            'checkbox'                   =>      $data['Checkbox']                                  ?? '',
+            'paymentsystem'              =>      $data['paymentsystem']                             ?? '',
+            'payment_order_id'           =>      $data['payment']['orderid']                        ?? '',
+            'products'                   =>      json_encode($data['payment']['products'])          ?? '',
+            'promocode'                  =>      json_encode($this->promocode),
+            'payment_subtotal'           =>      $data['payment']['subtotal']                       ?? '',
+            'payment_amount'             =>      $data['payment']['amount']                         ?? '',
+            'delivery'                   =>      json_encode($this->delivery),
+            'form_id'                    =>      $data['formid']                                    ?? '',
+            'form_name'                  =>      $data['formname']                                  ?? '',
+        ]);
     }
 
     /**
      * @param $data
      */
-    public static function store($data)
+    public function checkDataProducts($data)
     {
-        Log::info('store: ', $data);
-        return self::create([
-            'name'                                      =>      $data['name'],
-            'phone'                                     =>      $data['phone'],
-            'email'                                     =>      $data['email'],
-            'checkbox'                                  =>      $data['Checkbox'],
-            'paymentsystem'                             =>      $data['paymentsystem'],
-            'payment_order_id'                          =>      $data['payment']['orderid'],
-            'payment_products_name'                     =>      $data['payment']['products']['name'],
-            'payment_products_quantity'                 =>      $data['payment']['products']['quantity'],
-            'payment_products_amount'                   =>      $data['payment']['products']['amount'],
-            'payment_products_external_id'              =>      $data['payment']['products']['externalid'],
-            'payment_products_price'                    =>      $data['payment']['products']['price'],
-            'payment_products_sku'                      =>      $data['payment']['products']['sku'],
-            'payment_promocode'                         =>      $data['payment']['promocode'],
-            'payment_discount_value'                    =>      $data['payment']['discountvalue'],
-            'payment_discount'                          =>      $data['payment']['discount'],
-            'payment_subtotal'                          =>      $data['payment']['subtotal'],
-            'payment_amount'                            =>      $data['payment']['amount'],
-            'payment_delivery'                          =>      $data['payment']['delivery'],
-            'payment_delivery_price'                    =>      $data['payment']['delivery_price'],
-            'payment_delivery_fio'                      =>      $data['payment']['delivery_fio'],
-            'payment_delivery_address'                  =>      $data['payment']['delivery_address'],
-            'payment_delivery_comment'                  =>      $data['payment']['delivery_comment'],
-            'payment_delivery_pickup_id'                =>      $data['payment']['delivery_pickup_id'],
-            'payment_delivery_zip'                      =>      $data['payment']['delivery_zip'],
-            'form_id'                                   =>      $data['formid'],
-            'form_name'                                 =>      $data['formname'],
-        ]);
+        if (isset($data['payment'])){
+            $this->dataProducts = true;
+        }
     }
+
+    /**
+     * @param $data
+     */
+    private function preparePromocode($data)
+    {
+        if($this->dataProducts){
+            $this->promocode = [
+              'promocode'       =>   $data['payment']['promocode']      ?? '',
+              'discountvalue'   =>   $data['payment']['discountvalue']  ?? '',
+              'discount'        =>   $data['payment']['discountvalue']  ?? '',
+            ];
+        }
+
+    }
+
+    /**
+     * @param $data
+     */
+    private function prepareDelivery($data)
+    {
+        if($this->dataProducts){
+            $this->delivery = [
+                'delivery'                      =>   $data['payment']['delivery']               ?? '',
+                'delivery_price'                =>   $data['payment']['delivery_price']         ?? '',
+                'delivery_fio'                  =>   $data['payment']['delivery_fio']           ?? '',
+                'delivery_address'              =>   $data['payment']['delivery_address']       ?? '',
+                'delivery_comment'              =>   $data['payment']['delivery_comment']       ?? '',
+                'delivery_pickup_id'            =>   $data['payment']['delivery_pickup_id']     ?? '',
+                'delivery_zip'                  =>   $data['payment']['delivery_zip']           ?? '',
+            ];
+        }
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    private function setName($data)
+    {
+        if($this->dataProducts){
+            return $this->name = $data['name'];
+        }
+
+        return $this->name = $data['Name'];
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    private function setPhone($data)
+    {
+        if($this->dataProducts){
+            return $this->phone = $data['phone'];
+        }
+
+        return $this->phone = $data['Phone'];
+    }
+
+
 }
