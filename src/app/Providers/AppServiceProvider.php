@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Admin\FormFields\PromocodeFieldHandler;
 use Illuminate\Support\ServiceProvider;
+
+use TCG\Voyager\Facades\Voyager as VoyagerFacade;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        VoyagerFacade::addFormField(PromocodeFieldHandler::class);
     }
 }
