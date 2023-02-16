@@ -36,7 +36,7 @@ return [
         'api_token'             => env('KEYCRM_API_TOKEN', ''),
         'url'                   => env('KEYCRM_URL', 'https://openapi.keycrm.app/v1/'),
         'action_lead'           => env('KEYCRM_ACTION_LEADS', 'leads'),
-        'log'                   => env('KEYCRM_LOG_LEADS', false),
+        'log'                   => env('KEYCRM_LOG', false),
     ],
 
 ];
