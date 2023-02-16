@@ -1,50 +1,41 @@
 <?php
 
-namespace App\Jobs\Webhook;
 
-use App\Models\Lead;
-use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
+namespace App\Services\KeyCrm;
 
-class HandlerForPoolArgentisNano extends ProcessWebhookJob
+
+class KeyCrmLeads
 {
 
-    /**
-     * The number of seconds the job can run before timing out.
-     *
-     * @var int
-     */
-    public $timeout = 3600;
+    use KeyCrmService;
 
     /**
-     *
+     * @var string
      */
-    public function handle()
+    private string $actionName = 'Leads';
+
+    /**
+     * @param $data_string
+     */
+    public function sendData($data_string)
     {
-        if(config('services.keycrm.service_enabled')){
-            $data = $this->webhookCall['payload'];
-
-            $preparedData = $this->prepareData($data);
-            if(config('services.keycrm.log')) {
-                logger(json_encode($preparedData));
-            }
-            $this->sendData(json_encode($preparedData));
-        }
-
+        $action     = config('services.keycrm.action_lead');
+        KeyCrmService::sendData($data_string, $action, $this->actionName);
     }
 
     /**
      * @param $data
-     * @return array
+     * @return array|false
      */
-    private function prepareData($data)
+    public function prepareData($data)
     {
         if (isset($data['payment'])){
             return $this->dataWithProduct($data);
-        } else {
-           $this->dataCallback();
+        } elseif (isset($data['Name'])) {
+            return $this->dataCallback($data);
         }
 
-
+        return false;
     }
 
     /**
@@ -84,7 +75,7 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
     /**
      * @return array
      */
-    private function dataCallback()
+    private function dataCallback($data)
     {
         return $preparedData = [
             "title"             => '',
@@ -104,39 +95,6 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         ];
     }
 
-    /**
-     * @param $data_string
-     */
-    private function sendData($data_string)
-    {
-
-        // api token
-        $apiToken   = config('services.keycrm.api_token');
-        $url        = config('services.keycrm.url');
-        $action     = config('services.keycrm.action_lead');
-
-        // send data to key_crm server
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url . $action);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,$data_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Content-type: application/json",
-                "Accept: application/json",
-                "Cache-Control: no-cache",
-                "Pragma: no-cache",
-                'Authorization:  Bearer ' . $apiToken)
-        );
-        $result = curl_exec($ch);
-
-        if(config('services.keycrm.log')) {
-            logger($result);
-        }
-
-        curl_close($ch);
-
-    }
 
     /**
      * @param $dataPaymentProducts
@@ -172,15 +130,15 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         $paymentsystem = $this->setPaymentType($dataCustomFields['paymentsystem']);
 
         return $dataCustomFields = [
-                [   'uuid'  => 'LD_1009',
-                    'value' => $dataCustomFields['payment']['delivery_address'] ?? '-'
-                ],
-                [   'uuid'  => 'LD_1010',
-                    'value' => $dataCustomFields['payment']['promocode'] ?? '-'
-                ],
-                [   'uuid'  => 'LD_1011',
-                    'value' => $paymentsystem ?? '-'
-                ]
+            [   'uuid'  => 'LD_1009',
+                'value' => $dataCustomFields['payment']['delivery_address'] ?? '-'
+            ],
+            [   'uuid'  => 'LD_1010',
+                'value' => $dataCustomFields['payment']['promocode'] ?? '-'
+            ],
+            [   'uuid'  => 'LD_1011',
+                'value' => $paymentsystem ?? '-'
+            ]
         ];
     }
 
@@ -201,4 +159,5 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
 
         return $paymentSystem;
     }
+
 }

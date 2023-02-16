@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Jobs\Webhook;
+namespace App\Webhook;
 
 
 use Illuminate\Http\Request;
