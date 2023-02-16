@@ -2,6 +2,7 @@
 
 namespace App\Webhook;
 
+use App\Models\Lead;
 use Illuminate\Support\Facades\Log;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
 use App\Services\KeyCrm\KeyCrmLeads;
@@ -33,12 +34,17 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
             $keyCrmLeads = new KeyCrmLeads();
             $preparedData = $keyCrmLeads->prepareData($data);
 
+            // Store Lead
+            $leads = new Lead();
+            $leads->store($data);
+
             if(config('services.keycrm.log')) {
                 Log::channel('keycrm')->info('*** Prepared data ***');
                 Log::channel('keycrm')->info($preparedData);
                 Log::channel('keycrm')->info('*** Prepared data END ***');
             }
 
+            // Send data to KeyCrm
             if ($preparedData){
                 $keyCrmLeads->sendData(json_encode($preparedData));
             } else {

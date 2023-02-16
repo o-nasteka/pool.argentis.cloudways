@@ -22,24 +22,11 @@ return new class extends Migration
             $table->string('checkbox')->nullable();
             $table->string('paymentsystem')->nullable();
             $table->string('payment_order_id')->nullable();
-            $table->string('payment_products_name')->nullable();
-            $table->string('payment_products_quantity')->nullable();
-            $table->string('payment_products_amount')->nullable();
-            $table->string('payment_products_external_id')->nullable();
-            $table->string('payment_products_price')->nullable();
-            $table->string('payment_products_sku')->nullable();
-            $table->string('payment_promocode')->nullable();
-            $table->string('payment_discount_value')->nullable();
-            $table->string('payment_discount')->nullable();
+            $table->json('products')->nullable();
+            $table->json('promocode')->nullable();
             $table->string('payment_subtotal')->nullable();
             $table->string('payment_amount')->nullable();
-            $table->string('payment_delivery')->nullable();
-            $table->string('payment_delivery_price')->nullable();
-            $table->string('payment_delivery_fio')->nullable();
-            $table->string('payment_delivery_address')->nullable();
-            $table->string('payment_delivery_comment')->nullable();
-            $table->string('payment_delivery_pickup_id')->nullable();
-            $table->string('payment_delivery_zip')->nullable();
+            $table->json('delivery')->nullable();
             $table->string('form_id')->nullable();
             $table->string('form_name')->nullable();
 
