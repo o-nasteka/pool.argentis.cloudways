@@ -59,48 +59,6 @@ class Lead extends Model
         'delivery'  => 'array',
     ];
 
-//    /**
-//     * @param $value
-//     */
-//    public function setProductsAttribute($value)
-//    {
-//        if (is_string($value)) {
-//            $value = json_decode($value, true);
-//        }
-//        if (empty($value)) {
-//            $value = array();
-//        }
-//        $this->attributes['products'] = json_encode($value);
-//    }
-//
-//    /**
-//     * @param $value
-//     */
-//    public function setPromocodeAttribute($value)
-//    {
-//        if (is_string($value)) {
-//            $value = json_decode($value, true);
-//        }
-//        if (empty($value)) {
-//            $value = array();
-//        }
-//        $this->attributes['promocode'] = json_encode($value);
-//    }
-//
-//    /**
-//     * @param $value
-//     */
-//    public function setDeliveryAttribute($value)
-//    {
-//        if (is_string($value)) {
-//            $value = json_decode($value, true);
-//        }
-//        if (empty($value)) {
-//            $value = array();
-//        }
-//        $this->attributes['delivery'] = json_encode($value);
-//    }
-
     /**
      * @param $data
      */
