@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'keycrm'    => [
+        'service_enabled'       => env('KEYCRM_ENABLED', false),
+        'api_token'             => env('KEYCRM_API_TOKEN', ''),
+        'url'                   => env('KEYCRM_URL', 'https://openapi.keycrm.app/v1/'),
+        'action_lead'           => env('KEYCRM_ACTION_LEADS', 'leads'),
+        'log'                   => env('KEYCRM_LOG', false),
+    ],
+
 ];

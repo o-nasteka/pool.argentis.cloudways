@@ -21,3 +21,6 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
+
+// Webhooks
+Route::webhooks('webhook-pool-argentisnano', 'webhook-pool-argentisnano');
