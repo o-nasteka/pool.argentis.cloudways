@@ -37,7 +37,12 @@ class Lead extends Model
     /**
      * @var bool
      */
-    private $dataProducts = false;
+    private $issetProducts = false;
+
+    /**
+     * @var array
+     */
+    private $products = [];
 
 
     /**
@@ -68,11 +73,8 @@ class Lead extends Model
         Log::channel('keycrm')->info($data);
         Log::channel('keycrm')->info('*** Leads END ***');
 
-        $this->checkDataProducts($data);
-        $this->preparePromocode($data);
-        $this->prepareDelivery($data);
-        $this->setName($data);
-        $this->setPhone($data);
+        $this->prepareData($data);
+
 
         return self::create([
             'name'                       =>      $this->name,
@@ -81,7 +83,7 @@ class Lead extends Model
             'checkbox'                   =>      $data['Checkbox']                                  ?? '',
             'paymentsystem'              =>      $data['paymentsystem']                             ?? '',
             'payment_order_id'           =>      $data['payment']['orderid']                        ?? '',
-            'products'                   =>      json_encode($data['payment']['products'])          ?? '',
+            'products'                   =>      $this->products                                    ?? '',
             'promocode'                  =>      json_encode($this->promocode),
             'payment_subtotal'           =>      $data['payment']['subtotal']                       ?? '',
             'payment_amount'             =>      $data['payment']['amount']                         ?? '',
@@ -94,10 +96,33 @@ class Lead extends Model
     /**
      * @param $data
      */
-    public function checkDataProducts($data)
+    private function prepareData($data)
+    {
+        $this->checkIssetProducts($data);
+        $this->prepareProducts($data);
+        $this->preparePromocode($data);
+        $this->prepareDelivery($data);
+        $this->setName($data);
+        $this->setPhone($data);
+    }
+
+    /**
+     * @param $data
+     */
+    private function checkIssetProducts($data)
     {
         if (isset($data['payment'])){
-            $this->dataProducts = true;
+            $this->issetProducts = true;
+        }
+    }
+
+    /**
+     * @param $data
+     */
+    private function prepareProducts($data)
+    {
+        if($this->issetProducts){
+            $this->products = json_encode($data['payment']['products']);
         }
     }
 
@@ -106,7 +131,7 @@ class Lead extends Model
      */
     private function preparePromocode($data)
     {
-        if($this->dataProducts){
+        if($this->issetProducts){
             $this->promocode = [
               'promocode'       =>   $data['payment']['promocode']      ?? '',
               'discountvalue'   =>   $data['payment']['discountvalue']  ?? '',
@@ -121,7 +146,7 @@ class Lead extends Model
      */
     private function prepareDelivery($data)
     {
-        if($this->dataProducts){
+        if($this->issetProducts){
             $this->delivery = [
                 'delivery'                      =>   $data['payment']['delivery']               ?? '',
                 'delivery_price'                =>   $data['payment']['delivery_price']         ?? '',
@@ -140,7 +165,7 @@ class Lead extends Model
      */
     private function setName($data)
     {
-        if($this->dataProducts){
+        if($this->issetProducts){
             return $this->name = $data['name'];
         }
 
@@ -153,7 +178,7 @@ class Lead extends Model
      */
     private function setPhone($data)
     {
-        if($this->dataProducts){
+        if($this->issetProducts){
             return $this->phone = $data['phone'];
         }
 
