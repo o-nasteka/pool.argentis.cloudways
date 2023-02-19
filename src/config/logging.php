@@ -118,9 +118,27 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
         // custom log
+        'webhook' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/webhook.log'),
+            'level' => 'info',
+            'days' => 7,
+        ],
         'keycrm' => [
             'driver' => 'daily',
             'path' => storage_path('logs/keycrm.log'),
+            'level' => 'info',
+            'days' => 7,
+        ],
+        'lead' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/lead.log'),
+            'level' => 'info',
+            'days' => 7,
+        ],
+        'products' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/products.log'),
             'level' => 'info',
             'days' => 7,
         ],

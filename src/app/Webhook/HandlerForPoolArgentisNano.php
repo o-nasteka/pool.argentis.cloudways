@@ -2,10 +2,11 @@
 
 namespace App\Webhook;
 
-use App\Models\Lead;
+use App\Jobs\CreateLead;
+use App\Models\Lead\Lead;
 use Illuminate\Support\Facades\Log;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
-use App\Services\KeyCrm\KeyCrmLeads;
+use App\Services\KeyCrm\Leads\KeyCrmLeads;
 
 class HandlerForPoolArgentisNano extends ProcessWebhookJob
 {
@@ -26,23 +27,21 @@ class HandlerForPoolArgentisNano extends ProcessWebhookJob
         if(config('services.keycrm.service_enabled')){
             $data = $this->webhookCall['payload'];
             if(config('services.keycrm.log')) {
-                Log::channel('keycrm')->info('**** Webhook data ****');
-                Log::channel('keycrm')->info($data);
-                Log::channel('keycrm')->info('**** Webhook data END ****');
+                Log::channel('webhook')->info('**** Webhook data ****');
+                Log::channel('webhook')->info($data);
+                Log::channel('webhook')->info('**** Webhook data END ****');
             }
 
-            $keyCrmLeads = new KeyCrmLeads();
+            $keyCrmLeads = new KeyCrmLeads($data);
             $preparedData = $keyCrmLeads->prepareData($data);
 
             // Store Lead
-            // todo Add Job Handler for this action
-            $leads = new Lead();
-            $leads->store($data);
+            CreateLead::dispatch($data);
 
             if(config('services.keycrm.log')) {
-                Log::channel('keycrm')->info('*** Prepared data ***');
+                Log::channel('keycrm')->info('*** Prepared data for KeyCrm ***');
                 Log::channel('keycrm')->info($preparedData);
-                Log::channel('keycrm')->info('*** Prepared data END ***');
+                Log::channel('keycrm')->info('*** Prepared data for KeyCrm END ***');
             }
 
             // Send data to KeyCrm
