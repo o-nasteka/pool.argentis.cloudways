@@ -19,12 +19,12 @@ class KeyCrmLeads
     /**
      * @var bool
      */
-    private bool $issetProducts = false;
+    private bool $issetProducts;
 
     /**
      * @var array
      */
-    private $products = [];
+    protected $products = [];
 
     /**
      * @var array
@@ -38,17 +38,19 @@ class KeyCrmLeads
     public function __construct($data)
     {
         $this->issetProducts = KeyCrmPrepareProducts::checkIssetProducts($data);
-
+        if ($this->issetProducts){
+            $this->products = $data;
+        }
     }
 
     /**
      * @param $data
      * @return KeyCrmSendLeadCallbak|array
      */
-    public function prepareData($data)
+    public function prepareData()
     {
         if ($this->issetProducts){
-            return $this->dataWithProduct($data);
+            return $this->dataWithProduct($this->products);
         } else {
             $sendLeadCallback = new KeyCrmSendLeadCallbak();
             $sendLeadCallback->dataCallback($data);
@@ -63,11 +65,8 @@ class KeyCrmLeads
      */
     private function dataWithProduct($data)
     {
-        $products = new KeyCrmPrepareProducts();
-        $this->products = $products->prepareProducts(
-            $data,
-            $this->issetProducts
-        );
+        $products = new KeyCrmPrepareProducts($data);
+        $this->products = $products->prepareProducts($data);
 
         $customFields = new KeyCrmCustomFields();
         $this->customFields = $customFields->prepareCustomFields($data);
@@ -85,6 +84,5 @@ class KeyCrmLeads
         $action     = config('services.keycrm.action_lead');
         KeyCrmService::sendData($data_string, $action, $this->actionName);
     }
-
 
 }

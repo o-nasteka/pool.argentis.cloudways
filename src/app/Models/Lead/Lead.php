@@ -90,8 +90,8 @@ class Lead extends Model
     {
         $this->issetProducts = KeyCrmPrepareProducts::checkIssetProducts($data);
 
-        $products = new KeyCrmPrepareProducts();
-        $products->prepareProducts($data, $this->issetProducts);
+        $products = new KeyCrmPrepareProducts($data);
+        $products->prepareProducts($data);
         $this->products = $products;
 
         $leadHelper = new LeadHelper();
