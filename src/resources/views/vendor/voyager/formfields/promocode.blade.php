@@ -1,5 +1,5 @@
 @php
-    if(isset($dataTypeContent->{$row->field})){
+    if(isset($dataTypeContent->{$row->field}) && !empty($dataTypeContent->{$row->field})){
         $dataArr = json_decode($dataTypeContent->{$row->field}, true);
     } else {
         $dataArr = [];
