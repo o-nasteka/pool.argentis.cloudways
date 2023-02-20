@@ -7,7 +7,7 @@ networks:
 services:
     app:
         build:
-            context: ./dockerfiles
+            context: dockerfiles
             dockerfile: nginx.dockerfile
             args:
                 - UID=${UID:-1000}
@@ -15,7 +15,7 @@ services:
         ports:
             - "80:80"
         volumes:
-            - ./src:/var/www/html:delegated
+            - .:/var/www/html:delegated
         depends_on:
             - php
             - redis
@@ -44,7 +44,7 @@ services:
 
     php:
         build:
-            context: ./dockerfiles
+            context: dockerfiles
             dockerfile: php.dockerfile
             args:
                 - UID=${UID:-1000}
@@ -52,7 +52,7 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - ./src:/var/www/html:delegated
+            - .:/var/www/html:delegated
         networks:
             - laravel
 
@@ -67,13 +67,13 @@ services:
 
     composer:
         build:
-            context: ./dockerfiles
+            context: dockerfiles
             dockerfile: php.dockerfile
             args:
                 - UID=${UID:-1000}
                 - GID=${GID:-1000}
         volumes:
-            - ./src:/var/www/html
+            - .:/var/www/html
         depends_on:
             - php
         entrypoint: [ 'composer', '--ignore-platform-reqs' ]
@@ -83,7 +83,7 @@ services:
     npm:
         image: node:current-alpine
         volumes:
-            - ./src:/var/www/html
+            - .:/var/www/html
         ports:
             - "3000:3000"
             - "3001:3001"
@@ -95,13 +95,13 @@ services:
 
     artisan:
         build:
-            context: ./dockerfiles
+            context: dockerfiles
             dockerfile: php.dockerfile
             args:
                 - UID=${UID:-1000}
                 - GID=${GID:-1000}
         volumes:
-            - ./src:/var/www/html:delegated
+            - .:/var/www/html:delegated
         depends_on:
             - mysql
         entrypoint: [ 'php', '/var/www/html/artisan' ]
@@ -118,10 +118,10 @@ services:
 
     supervisor:
         build:
-            context: ./dockerfiles
+            context: dockerfiles
             dockerfile: supervisor.dockerfile
         container_name: supervisor
         volumes:
-            - ./src:/var/www/html
+            - .:/var/www/html
         networks:
             - laravel
